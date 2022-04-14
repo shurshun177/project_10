@@ -86,9 +86,9 @@ def get_jwt_token(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    email = serializer.data.get('email')
+    username = serializer.data.get('username')
     confirmation_code = serializer.data.get('confirmation_code')
-    user = get_object_or_404(User, email=email)
+    user = get_object_or_404(User, username=username)
 
     if default_token_generator.check_token(user, confirmation_code):
         token = AccessToken.for_user(user)
