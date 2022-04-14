@@ -13,7 +13,7 @@ from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
 from .filters import TitleFilter
-from .models import Review, Title, Category, Genre
+from reviews.models import Review, Title, Category, Genre
 from .permissions import IsAuthorAdminModeratorOrReadOnly, IsAdmin, IsAdminOrReadOnly
 from .serializers import (
     CommentSerializer, ReviewSerializer, UserCreationSerializer, ConfirmationCodeSerializer, UserSerializer,
