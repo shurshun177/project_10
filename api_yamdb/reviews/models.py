@@ -173,6 +173,8 @@ class Review(models.Model):
         # Можно лучше: Не забываем добавлять сортировку.
         # Можно, конечно, в кверисете вьюсета, но лучше здесб
         ordering = ['-pub_date']
+        # Надо исправить: добавляем констрейнт в модель
+        unique_together = ('author', 'title')
 
     def __str__(self):
         return f'{self.title}, {self.score}, {self.author}'
