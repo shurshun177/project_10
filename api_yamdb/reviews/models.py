@@ -98,14 +98,15 @@ class GenreTitle(models.Model):
 
 
 # Надо исправить: Роли описаны в виде чойсов.
-# Лучше так, чем просто списком кортежей, ниже объясню почему
-class UserRole(models.TextChoices):
+class User(AbstractUser):
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
-
-
-class User(AbstractUser):
+    USER_ROLES = (
+        (USER, 'User'),
+        (MODERATOR, 'Moderator'),
+        (ADMIN, 'Admin'),
+    )
     email = models.EmailField(unique=True)
     confirmation_code = models.CharField(
         max_length=99,
@@ -118,8 +119,8 @@ class User(AbstractUser):
         # Можно лучше: Тут обычно задают 9, как в moderator.
         # Я бы закладывался сразу с запасом
         max_length=20,
-        choices=UserRole.choices,
-        default=UserRole.USER
+        choices=USER_ROLES,
+        default=USER
     )
     bio = models.TextField(blank=True)
 
@@ -129,7 +130,7 @@ class User(AbstractUser):
         # Надо исправить: Везде, где мы используем роли - не используем строки,
         # а используем константу
         return (
-                self.role == UserRole.ADMIN or
+                self.role == User.ADMIN or
                 self.is_superuser or
                 # Я тут не уверен, считается ли стафф "администратором Django"
                 # по спеке, но будем считать, что да
@@ -137,7 +138,7 @@ class User(AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == UserRole.MODERATOR
+        return self.role == User.MODERATOR
 
 
 class Review(models.Model):
