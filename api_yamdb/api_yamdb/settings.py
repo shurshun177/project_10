@@ -20,6 +20,7 @@ DOMAIN_NAME = 'yamdb.ru'
 INSTALLED_APPS = [
     'api',
     'reviews',
+    'users',
 
     'rest_framework',
     'django_filters',
@@ -112,7 +113,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
-AUTH_USER_MODEL = 'reviews.User'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
