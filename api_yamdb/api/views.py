@@ -59,7 +59,7 @@ def send_confirmation_code(request):
     username = serializer.data['username']
 
     # Надо исправить: Рассказываем про get_or_create
-    user = User.objects.get_or_create(email=email, username=username)
+    user, _ = User.objects.get_or_create(email=email, username=username)
 
     # Можно лучше: Тут студенты обычно придумывают разный зоопарк для
     # генерации токенов. Я бы рассказывал про uuid3/4 по желанию и
