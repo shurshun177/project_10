@@ -83,6 +83,30 @@ class UserCreationSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     username = serializers.CharField(required=True)
 
+    # Надо исправить: данный валидатор должен быть тут, а не во вьюхе.
+    def validate_username(self, value):
+        """Проверяем, что нельзя создать пользователя с username = "me"
+        и, что нельзя создать с одинаковым username."""
+        username = value.lower()
+        if username == 'me':
+            raise serializers.ValidationError(
+                'Пользователя с username="me" создавать нельзя.'
+            )
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError(
+                f'Пользователь с таким username — {username} — уже существует.'
+            )
+        return value
+
+    def validate_email(self, value):
+        """Проверяем, что нельзя создать пользователя с одинаковым username."""
+        email = value.lower()
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(
+                f'Пользователь с таким Email — {email} — уже существует.'
+            )
+        return value
+
 
 class ConfirmationCodeSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)

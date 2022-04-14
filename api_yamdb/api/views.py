@@ -46,7 +46,7 @@ class CDLViewSet(
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def send_confirmation_code(request):
+def signup(request):
     serializer = UserCreationSerializer(data=request.data)
     # Надо исправить:
     # Рассказываем про raise_exception, чтобы не делать вложенность и ифами
