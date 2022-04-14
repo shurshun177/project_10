@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "API YaMDB"
+version = "0.1.0"
+description = "api_yamdb project for code reviewers"
+authors = ["Artem Kolomatskiy <kolomatskiy@bk.ru>", "Dastan Abd <dastand.climber@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+requests = "2.26.0"
+Django = "<3.0"
+djangorestframework = "3.12.4"
+PyJWT = "2.1.0"
+pytest = "6.2.4"
+pytest-django = "4.4.0"
+pytest-pythonpath = "0.7.3"
+djangorestframework-simplejwt = "^5.1.0"
+django-filter = "^21.1"
+
+[tool.poetry.dev-dependencies]
+django-stubs = "^1.10.1"
+djangorestframework-stubs = "^1.5.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
