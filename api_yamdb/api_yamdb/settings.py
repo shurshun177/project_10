@@ -35,6 +35,7 @@ DOMAIN_NAME = 'yamdb.ru'
 
 INSTALLED_APPS = [
     'api',
+    'reviews',
 
     'rest_framework',
     'django_filters',
