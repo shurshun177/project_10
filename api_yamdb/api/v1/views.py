@@ -5,19 +5,25 @@ from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, mixins, filters
-from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
+from rest_framework import filters, mixins, status
+from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.permissions import (
+    AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly,
+)
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework_simplejwt.tokens import AccessToken
 
+from reviews.models import Category, Genre, Review, Title
+
 from .filters import TitleFilter
-from .models import Review, Title, Category, Genre
-from .permissions import IsAuthorAdminModeratorOrReadOnly, IsAdmin, IsAdminOrReadOnly
+from .permissions import (
+    IsAdmin, IsAdminOrReadOnly, IsAuthorAdminModeratorOrReadOnly,
+)
 from .serializers import (
-    CommentSerializer, ReviewSerializer, UserCreationSerializer, ConfirmationCodeSerializer, UserSerializer,
-    TitleReadSerializer, TitleWriteSerializer, CategorySerializer, GenreSerializer
+    CategorySerializer, CommentSerializer, ConfirmationCodeSerializer,
+    GenreSerializer, ReviewSerializer, TitleReadSerializer,
+    TitleWriteSerializer, UserCreationSerializer, UserSerializer,
 )
 
 User = get_user_model()
@@ -40,7 +46,7 @@ class CDLViewSet(
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def send_confirmation_code(request):
+def signup(request):
     serializer = UserCreationSerializer(data=request.data)
     # Надо исправить:
     # Рассказываем про raise_exception, чтобы не делать вложенность и ифами
@@ -53,7 +59,7 @@ def send_confirmation_code(request):
     username = serializer.data['username']
 
     # Надо исправить: Рассказываем про get_or_create
-    user = User.objects.get_or_create(email=email, username=username)
+    user, _ = User.objects.get_or_create(email=email, username=username)
 
     # Можно лучше: Тут студенты обычно придумывают разный зоопарк для
     # генерации токенов. Я бы рассказывал про uuid3/4 по желанию и
@@ -80,9 +86,9 @@ def get_jwt_token(request):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    email = serializer.data.get('email')
+    username = serializer.data.get('username')
     confirmation_code = serializer.data.get('confirmation_code')
-    user = get_object_or_404(User, email=email)
+    user = get_object_or_404(User, username=username)
 
     if default_token_generator.check_token(user, confirmation_code):
         token = AccessToken.for_user(user)

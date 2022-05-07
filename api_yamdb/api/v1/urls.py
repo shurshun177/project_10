@@ -1,9 +1,10 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                    ReviewViewSet, TitleViewSet, UserViewSet,
-                    send_confirmation_code, get_jwt_token)
+from .views import (
+    CategoryViewSet, CommentViewSet, GenreViewSet, ReviewViewSet, TitleViewSet,
+    UserViewSet, get_jwt_token, signup,
+)
 
 v1_router = DefaultRouter()
 v1_router.register('genres', GenreViewSet, basename='genres')
@@ -27,12 +28,12 @@ v1_router.register(
 
 # Надо исправить: Урлы с одинаковым префиксом выносим в
 # отдельный список, чтобы сделать инклуд
-v1_auth_patterns = [
-    path('email/', send_confirmation_code, name='send_confirmation_code'),
+auth_patterns = [
+    path('signup/', signup, name='signup'),
     path('token/', get_jwt_token, name='get_token'),
 ]
 
 urlpatterns = [
-    path('v1/auth/', include(v1_auth_patterns)),
-    path('v1/', include(v1_router.urls))
+    path('auth/', include(auth_patterns)),
+    path('', include(v1_router.urls))
 ]

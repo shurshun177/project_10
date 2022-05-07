@@ -1,7 +1,6 @@
-from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
+from django.conf import settings
 from .validators import validate_year
 
 
@@ -52,7 +51,7 @@ class Title(models.Model):
         verbose_name='Наименование',
         max_length=200
     )
-    year = models.PositiveSmallIntegerField(
+    year = models.SmallIntegerField(
         verbose_name='Год',
         validators=[validate_year],
         # Можно лучше: рассказываем про индексы
@@ -97,49 +96,6 @@ class GenreTitle(models.Model):
     )
 
 
-# Надо исправить: Роли описаны в виде чойсов.
-# Лучше так, чем просто списком кортежей, ниже объясню почему
-class UserRole(models.TextChoices):
-    USER = 'user'
-    MODERATOR = 'moderator'
-    ADMIN = 'admin'
-
-
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    confirmation_code = models.CharField(
-        max_length=99,
-        blank=True,
-        editable=False,
-        null=True,
-        unique=True
-    )
-    role = models.CharField(
-        # Можно лучше: Тут обычно задают 9, как в moderator.
-        # Я бы закладывался сразу с запасом
-        max_length=20,
-        choices=UserRole.choices,
-        default=UserRole.USER
-    )
-    bio = models.TextField(blank=True)
-
-    # Можно лучше: можно добавить тут property для удобства
-    @property
-    def is_admin(self):
-        # Надо исправить: Везде, где мы используем роли - не используем строки,
-        # а используем константу
-        return (
-                self.role == UserRole.ADMIN or
-                self.is_superuser or
-                # Я тут не уверен, считается ли стафф "администратором Django"
-                # по спеке, но будем считать, что да
-                self.is_staff)
-
-    @property
-    def is_moderator(self):
-        return self.role == UserRole.MODERATOR
-
-
 class Review(models.Model):
     text = models.TextField(verbose_name='Текст')
     # Надо исправить: Здесь используем IntegerField (часто вижу Float) +
@@ -152,7 +108,7 @@ class Review(models.Model):
         ]
     )
     author = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='reviews',
     )
@@ -173,6 +129,8 @@ class Review(models.Model):
         # Можно лучше: Не забываем добавлять сортировку.
         # Можно, конечно, в кверисете вьюсета, но лучше здесб
         ordering = ['-pub_date']
+        # Надо исправить: добавляем констрейнт в модель
+        unique_together = ('author', 'title')
 
     def __str__(self):
         return f'{self.title}, {self.score}, {self.author}'
@@ -180,7 +138,7 @@ class Review(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='comments',
     )
