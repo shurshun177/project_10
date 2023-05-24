@@ -26,6 +26,8 @@ from .serializers import (
     TitleWriteSerializer, UserCreationSerializer, UserSerializer,
 )
 
+from rest_framework.permissions import IsAuthenticated
+
 User = get_user_model()
 
 
@@ -180,7 +182,8 @@ class CategoryViewSet(CDLViewSet):
 
 
 class TitleViewSet(ModelViewSet):
-    permission_classes = [IsAdminOrReadOnly, ]
+    # permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsAuthenticated, ]
     # Надо исправить: Здесь делаем аннотацию для рейтинга
     queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
     filter_backends = [DjangoFilterBackend]

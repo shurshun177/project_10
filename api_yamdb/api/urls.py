@@ -10,3 +10,13 @@ from .v1 import urls as v1_urls
 urlpatterns = [
     path('v1/', include(v1_urls))
 ]
+
+"""
+"user": Saddam, 
+"token": 
+(
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIj
+oiYWNjZXNzIiwiZXhwIjoxNzAyNzQ5NDk3LCJpYXQiOjE2NzEyMTM0OT
+csImp0aSI6ImZjMzYxODFlODYxZTQyOTA4Njg4ZGViOTRhZjk5MWJiIi
+widXNlcl9pZCI6MX0.luZxGNc8zahUXpgYQ7upIM7RbsMDhGpC7i9DjRb98P8"
+"""
